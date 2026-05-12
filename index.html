@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tic Tac Toe Arcade</title>
+    <meta name="description"
+        content="A polished static Tic Tac Toe website with Traditional, Infinite, Ultimate, and Tic-Tac-Ku modes.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <main class="app-shell">
+        <section id="menuScreen" class="menu-screen glass-card" aria-labelledby="menuTitle">
+            <p class="eyebrow">Static HTML, CSS, and JavaScript</p>
+            <h1 id="menuTitle">Tic Tac Toe Arcade</h1>
+            <p class="intro-text">
+                Pick a board, choose your challenger, and play a polished collection of Tic Tac Toe variants.
+            </p>
+
+            <div class="menu-tabs" role="tablist" aria-label="Main menu tabs">
+                <button id="playTabBtn" class="menu-tab is-selected" type="button" role="tab" aria-selected="true"
+                    aria-controls="playTabPanel" data-menu-tab="play">
+                    Play
+                </button>
+                <button id="rulesTabBtn" class="menu-tab" type="button" role="tab" aria-selected="false"
+                    aria-controls="rulesTabPanel" data-menu-tab="rules">
+                    Rules
+                </button>
+            </div>
+
+            <div id="playTabPanel" class="menu-tab-panel" role="tabpanel" aria-labelledby="playTabBtn">
+                <div class="mode-grid" aria-label="Choose a game mode">
+                    <button class="mode-card is-selected" type="button" data-mode="traditional" aria-pressed="true">
+                        <span class="mode-icon">3x3</span>
+                        <span class="mode-copy">
+                            <strong>Traditional Tic Tac Toe</strong>
+                            <small>Classic three-in-a-row with optional unbeatable computer play.</small>
+                        </span>
+                    </button>
+                    <button class="mode-card" type="button" data-mode="infinite" aria-pressed="false">
+                        <span class="mode-icon">INF</span>
+                        <span class="mode-copy">
+                            <strong>Infinite Tic Tac Toe</strong>
+                            <small>Only three active pieces per player. Old pieces disappear.</small>
+                        </span>
+                    </button>
+                    <button class="mode-card" type="button" data-mode="ultimate" aria-pressed="false">
+                        <span class="mode-icon">9x9</span>
+                        <span class="mode-copy">
+                            <strong>Ultimate Tic Tac Toe</strong>
+                            <small>Win small boards, then win the big board.</small>
+                        </span>
+                    </button>
+                    <button class="mode-card" type="button" data-mode="tictacku" aria-pressed="false">
+                        <span class="mode-icon">5+</span>
+                        <span class="mode-copy">
+                            <strong>Tic-Tac-Ku</strong>
+                            <small>Route moves like Ultimate, but first to five small boards wins.</small>
+                        </span>
+                    </button>
+                </div>
+
+                <div id="opponentPanel" class="setup-card">
+                    <div>
+                        <h2>Choose players</h2>
+                        <p id="opponentHint">Traditional and Infinite modes support two-player or computer games.</p>
+                    </div>
+                    <div class="segmented-control" role="group" aria-label="Choose opponent type">
+                        <button type="button" class="segment is-selected" data-opponent="two-player"
+                            aria-pressed="true">Two Players</button>
+                        <button type="button" class="segment" data-opponent="computer" aria-pressed="false">Vs
+                            Computer</button>
+                    </div>
+                </div>
+
+                <div id="modePreview" class="mode-preview" aria-live="polite">
+                    Classic 3x3 Tic Tac Toe. Player 1 is X by default and goes first in round 1.
+                </div>
+
+                <button id="startGameBtn" class="btn btn-primary btn-large" type="button">Start Game</button>
+            </div>
+
+            <div id="rulesTabPanel" class="menu-tab-panel rules-library" role="tabpanel" aria-labelledby="rulesTabBtn"
+                hidden>
+                <div class="rules-library-heading">
+                    <h2>Game Rules</h2>
+                    <p>
+                        X is always red, O is always blue, and tied games are recorded as CAT. In two-player games,
+                        Player 1 is X by default in round 1 and Player 2 is O by default. The starting player alternates
+                        after every completed round.
+                    </p>
+                </div>
+
+                <div class="rules-library-grid">
+                    <article class="rules-summary-card">
+                        <h3>Traditional Tic Tac Toe</h3>
+                        <ul>
+                            <li>Play on a standard 3x3 board.</li>
+                            <li>Players alternate turns placing X and O in empty cells.</li>
+                            <li>The first player to make three in a row horizontally, vertically, or diagonally wins.
+                            </li>
+                            <li>If every cell fills and nobody has three in a row, the result is CAT.</li>
+                            <li>Computer mode uses minimax perfect play. The human goes first in round 1, then the
+                                starter alternates.</li>
+                        </ul>
+                    </article>
+
+                    <article class="rules-summary-card">
+                        <h3>Infinite Tic Tac Toe</h3>
+                        <ul>
+                            <li>Play on a 3x3 board, but each player may keep only three active pieces.</li>
+                            <li>When a player places a fourth piece, that player's oldest piece disappears immediately.
+                            </li>
+                            <li>The current player's oldest active piece appears faded before the move.</li>
+                            <li>A player wins by creating a normal three-in-a-row line using currently active pieces.
+                            </li>
+                            <li>Computer mode simulates future piece removals with minimax-style search and heuristics.
+                            </li>
+                        </ul>
+                    </article>
+
+                    <article class="rules-summary-card">
+                        <h3>Ultimate Tic Tac Toe</h3>
+                        <ul>
+                            <li>Play on a 3x3 grid of smaller 3x3 boards.</li>
+                            <li>The cell a player chooses determines which small board the next player must play in.
+                            </li>
+                            <li>If the required small board is already won or full, the next player may choose any open
+                                board.</li>
+                            <li>Win a small board by making three in a row inside it.</li>
+                            <li>Win the overall game by winning three small boards in a row. If all small boards close
+                                with no overall winner, the result is CAT.</li>
+                        </ul>
+                    </article>
+
+                    <article class="rules-summary-card">
+                        <h3>Tic-Tac-Ku</h3>
+                        <ul>
+                            <li>Uses the same nine-board layout and move-routing rules as Ultimate Tic Tac Toe.</li>
+                            <li>The cell a player chooses sends the next player to the matching small board.</li>
+                            <li>If the required small board is closed, any open small board may be chosen.</li>
+                            <li>Win small boards by making three in a row inside them.</li>
+                            <li>The first player to win at least five small boards wins. Those five boards do not need
+                                to be in a row.</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="gameScreen" class="game-screen" hidden aria-label="Game screen">
+            <div class="game-card glass-card">
+                <header class="game-topbar">
+                    <div class="title-block">
+                        <p class="eyebrow">Current mode</p>
+                        <h1 id="modeTitle">Traditional Tic Tac Toe</h1>
+                        <div class="badge-row" aria-label="Mode details">
+                            <span id="modeBadge" class="badge">Classic 3x3</span>
+                            <span id="opponentBadge" class="badge">Two Players</span>
+                        </div>
+                    </div>
+
+                    <div class="game-actions" aria-label="Game controls">
+                        <button id="newGameBtn" class="btn btn-primary" type="button">New Game</button>
+                        <button id="resetScoresBtn" class="btn btn-ghost" type="button">Reset Scores</button>
+                        <button id="returnMenuBtn" class="btn btn-ghost" type="button">Return to Menu</button>
+                    </div>
+                </header>
+
+                <div class="info-strip">
+                    <div id="turnIndicator" class="turn-indicator" aria-live="polite">Player 1 (X) to move</div>
+                    <div id="assignmentText" class="assignment-text">Player 1 is X. Player 2 is O.</div>
+                </div>
+
+                <div class="game-layout">
+                    <section class="board-panel" aria-label="Game board and status">
+                        <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+                        <div id="boardHost" class="board-host"></div>
+                    </section>
+
+                    <aside class="side-panel" aria-label="Score and rules">
+                        <section class="score-card">
+                            <div class="section-heading">
+                                <h2>Scoreboard</h2>
+                                <span id="roundBadge" class="pill">Round 1</span>
+                            </div>
+                            <div id="scoreGrid" class="score-grid"></div>
+                        </section>
+
+                        <section id="boardCountPanel" class="score-card board-count-card" hidden>
+                            <div class="section-heading">
+                                <h2>Small boards won</h2>
+                            </div>
+                            <div id="boardCountGrid" class="score-grid compact"></div>
+                        </section>
+
+                        <details class="rules-card" open>
+                            <summary>Current mode rules</summary>
+                            <div id="rulesText" class="rules-text"></div>
+                        </details>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/config.js" defer></script>
+    <script src="js/state.js" defer></script>
+    <script src="js/shared.js" defer></script>
+    <script src="js/traditional.js" defer></script>
+    <script src="js/infinite.js" defer></script>
+    <script src="js/routed-board.js" defer></script>
+    <script src="js/ultimate.js" defer></script>
+    <script src="js/tictacku.js" defer></script>
+    <script src="js/ui.js" defer></script>
+    <script src="js/app.js" defer></script>
+</body>
+
+</html>
