@@ -62,6 +62,10 @@ body.playing-o {
     --turn-tint: rgba(74, 167, 255, 0.28);
 }
 
+body.prompt-open {
+    overflow: hidden;
+}
+
 button,
 summary {
     font: inherit;
@@ -288,6 +292,170 @@ h2 {
 .mode-copy small {
     color: var(--muted);
     line-height: 1.45;
+}
+
+
+.choice-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+}
+
+.choice-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 7, 18, 0.68);
+    backdrop-filter: blur(10px);
+    animation: modalFade 160ms ease;
+}
+
+.choice-card {
+    position: relative;
+    z-index: 1;
+    width: min(620px, 100%);
+    padding: clamp(22px, 4vw, 34px);
+    animation: modalLift 200ms cubic-bezier(0.18, 0.89, 0.32, 1.18);
+}
+
+.choice-card h2 {
+    margin-bottom: 10px;
+    font-size: clamp(1.65rem, 4vw, 2.4rem);
+    letter-spacing: -0.05em;
+}
+
+.choice-description {
+    margin-bottom: 18px;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+.choice-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    font-size: 1.5rem;
+    line-height: 1;
+    transition: background 180ms ease, transform 180ms ease;
+}
+
+.choice-close:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.choice-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.choice-modal.two-player-only .choice-actions {
+    grid-template-columns: 1fr;
+}
+
+.choice-button {
+    min-height: 138px;
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--text);
+    text-align: left;
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+}
+
+.choice-button:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.44);
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+}
+
+.choice-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.choice-button strong,
+.choice-button small {
+    display: block;
+}
+
+.choice-button strong {
+    margin-bottom: 6px;
+    font-size: 1.05rem;
+}
+
+.choice-button small {
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.choice-mark {
+    width: 62px;
+    height: 62px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    color: #fff;
+    font-weight: 950;
+    letter-spacing: -0.04em;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 12px 24px rgba(0, 0, 0, 0.22);
+}
+
+.choice-mark.duo {
+    background: linear-gradient(135deg, var(--x-color), var(--o-color));
+}
+
+.choice-mark.entity {
+    background:
+        radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.34), transparent 34%),
+        linear-gradient(135deg, #7b61ff, var(--o-color));
+}
+
+.choice-cancel {
+    width: 100%;
+    margin-top: 14px;
+}
+
+@keyframes modalFade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalLift {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .menu-tabs,
@@ -621,7 +789,8 @@ h2 {
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16), 0 14px 28px rgba(0, 0, 0, 0.24);
 }
 
-.cell.is-oldest {
+.cell.is-oldest,
+.micro-cell.is-oldest {
     opacity: 0.42;
     filter: saturate(0.65);
     box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25);
@@ -860,6 +1029,7 @@ h2 {
 
     .mode-grid,
     .rules-library-grid,
+    .choice-actions,
     .info-strip,
     .side-panel {
         grid-template-columns: 1fr;
@@ -895,6 +1065,11 @@ h2 {
 @media (max-width: 430px) {
     .mode-card {
         flex-direction: column;
+    }
+
+    .choice-button {
+        grid-template-columns: 1fr;
+        justify-items: start;
     }
 
     .mode-icon {

@@ -37,6 +37,15 @@ No frameworks, build tools, package managers, backend code, databases, or extern
    - The five small boards do not need to be in a row.
    - Two-player only.
 
+5. **Insane Tic Tac Toe**
+   - Uses the same routed nine-board structure as Ultimate Tic Tac Toe.
+   - Each small board behaves like an Infinite-style board.
+   - Each small board may contain at most three active pieces total.
+   - When a fourth piece is placed in a small board, that board's oldest active piece disappears immediately.
+   - Once a small board is won or closed, it stays closed for the rest of the game.
+   - Win the overall game by winning three small boards in a row.
+   - Two-player only.
+
 ## Rules Summary
 
 - Player 1 is X by default in round 1.

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tic Tac Toe Arcade</title>
     <meta name="description"
-        content="A polished static Tic Tac Toe website with Traditional, Infinite, Ultimate, and Tic-Tac-Ku modes.">
+        content="A polished static Tic Tac Toe website with Traditional, Infinite, Ultimate, Tic-Tac-Ku, and Insane modes.">
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -16,10 +16,11 @@
 
     <main class="app-shell">
         <section id="menuScreen" class="menu-screen glass-card" aria-labelledby="menuTitle">
-            <p class="eyebrow">Static HTML, CSS, and JavaScript</p>
+            <p class="eyebrow"></p>
             <h1 id="menuTitle">Tic Tac Toe Arcade</h1>
             <p class="intro-text">
-                Pick a board, choose your challenger, and play a polished collection of Tic Tac Toe variants.
+                Pick a board and play. Traditional and Infinite can be played against The Entity. Ultimate, Tic-Tac-Ku,
+                and Insane are two-player games.
             </p>
 
             <div class="menu-tabs" role="tablist" aria-label="Main menu tabs">
@@ -35,13 +36,14 @@
 
             <div id="playTabPanel" class="menu-tab-panel" role="tabpanel" aria-labelledby="playTabBtn">
                 <div class="mode-grid" aria-label="Choose a game mode">
-                    <button class="mode-card is-selected" type="button" data-mode="traditional" aria-pressed="true">
+                    <button class="mode-card" type="button" data-mode="traditional" aria-pressed="false">
                         <span class="mode-icon">3x3</span>
                         <span class="mode-copy">
                             <strong>Traditional Tic Tac Toe</strong>
                             <small>Classic three-in-a-row with optional unbeatable play against The Entity.</small>
                         </span>
                     </button>
+
                     <button class="mode-card" type="button" data-mode="infinite" aria-pressed="false">
                         <span class="mode-icon">INF</span>
                         <span class="mode-copy">
@@ -49,41 +51,70 @@
                             <small>Only three active pieces per player. Old pieces disappear.</small>
                         </span>
                     </button>
+
                     <button class="mode-card" type="button" data-mode="ultimate" aria-pressed="false">
                         <span class="mode-icon">9x9</span>
                         <span class="mode-copy">
                             <strong>Ultimate Tic Tac Toe</strong>
-                            <small>Win small boards, then win the big board.</small>
+                            <small>Two-player only. Win small boards, then win the big board.</small>
                         </span>
                     </button>
+
                     <button class="mode-card" type="button" data-mode="tictacku" aria-pressed="false">
                         <span class="mode-icon">5+</span>
                         <span class="mode-copy">
                             <strong>Tic-Tac-Ku</strong>
-                            <small>Route moves like Ultimate, but first to five small boards wins.</small>
+                            <small>Two-player only. Route moves like Ultimate, but first to five small boards
+                                wins.</small>
+                        </span>
+                    </button>
+
+                    <button class="mode-card" type="button" data-mode="insane" aria-pressed="false">
+                        <span class="mode-icon">INS</span>
+                        <span class="mode-copy">
+                            <strong>Insane Tic Tac Toe</strong>
+                            <small>Two-player only. Ultimate routing with Infinite-style small boards.</small>
                         </span>
                     </button>
                 </div>
 
-                <div id="opponentPanel" class="setup-card">
-                    <div>
-                        <h2>Choose players</h2>
-                        <p id="opponentHint">Traditional and Infinite modes support two-player games or battles against
-                            The Entity.</p>
-                    </div>
-                    <div class="segmented-control" role="group" aria-label="Choose opponent type">
-                        <button type="button" class="segment is-selected" data-opponent="two-player"
-                            aria-pressed="true">Two Players</button>
-                        <button type="button" class="segment" data-opponent="computer" aria-pressed="false">Vs The
-                            Entity</button>
-                    </div>
-                </div>
+                <div id="playerPrompt" class="choice-modal" role="dialog" aria-modal="true"
+                    aria-labelledby="promptTitle" aria-describedby="promptDescription" hidden>
+                    <div class="choice-backdrop" data-prompt-close></div>
 
-                <div id="modePreview" class="mode-preview" aria-live="polite">
-                    Classic 3x3 Tic Tac Toe. Player 1 is X by default and goes first in round 1.
-                </div>
+                    <section class="choice-card glass-card" tabindex="-1">
+                        <button id="promptCloseBtn" class="choice-close" type="button"
+                            aria-label="Close player choice prompt">&times;</button>
 
-                <button id="startGameBtn" class="btn btn-primary btn-large" type="button">Start Game</button>
+                        <p class="eyebrow">Choose players</p>
+                        <h2 id="promptTitle">Traditional Tic Tac Toe</h2>
+                        <p id="promptDescription" class="choice-description">
+                            Choose whether to play locally with another person or challenge The Entity.
+                        </p>
+
+                        <div class="choice-actions" aria-label="Choose player setup">
+                            <button id="promptTwoPlayerBtn" class="choice-button" type="button"
+                                data-prompt-opponent="two-player">
+                                <span class="choice-mark duo">2P</span>
+                                <span>
+                                    <strong>Two Players</strong>
+                                    <small>Player 1 and Player 2 share the same device.</small>
+                                </span>
+                            </button>
+
+                            <button id="promptComputerBtn" class="choice-button" type="button"
+                                data-prompt-opponent="computer">
+                                <span class="choice-mark entity">AI</span>
+                                <span>
+                                    <strong>The Entity</strong>
+                                    <small>It is impossible to beat The Entity.</small>
+                                </span>
+                            </button>
+                        </div>
+
+                        <button id="promptCancelBtn" class="btn btn-ghost choice-cancel" type="button">Cancel</button>
+                    </section>
+                </div>
             </div>
 
             <div id="rulesTabPanel" class="menu-tab-panel rules-library" role="tabpanel" aria-labelledby="rulesTabBtn"
@@ -106,8 +137,8 @@
                             <li>The first player to make three in a row horizontally, vertically, or diagonally wins.
                             </li>
                             <li>If every cell fills and nobody has three in a row, the result is CAT.</li>
-                            <li>Computer mode uses minimax perfect play. The human goes first in round 1, then the
-                                starter alternates.</li>
+                            <li>When playing The Entity, it uses full minimax perfect play. The human goes first in
+                                round 1, then the starter alternates.</li>
                         </ul>
                     </article>
 
@@ -120,7 +151,7 @@
                             <li>The current player's oldest active piece appears faded before the move.</li>
                             <li>A player wins by creating a normal three-in-a-row line using currently active pieces.
                             </li>
-                            <li>Computer mode simulates future piece removals with minimax-style search and heuristics.
+                            <li>The Entity simulates future piece removals with minimax-style search and heuristics.
                             </li>
                         </ul>
                     </article>
@@ -128,26 +159,47 @@
                     <article class="rules-summary-card">
                         <h3>Ultimate Tic Tac Toe</h3>
                         <ul>
+                            <li>Two-player only.</li>
                             <li>Play on a 3x3 grid of smaller 3x3 boards.</li>
                             <li>The cell a player chooses determines which small board the next player must play in.
                             </li>
                             <li>If the required small board is already won or full, the next player may choose any open
-                                board.</li>
+                                small board.</li>
                             <li>Win a small board by making three in a row inside it.</li>
-                            <li>Win the overall game by winning three small boards in a row. If all small boards close
-                                with no overall winner, the result is CAT.</li>
+                            <li>Win the overall game by winning three small boards in a row.</li>
+                            <li>If all small boards close with no overall winner, the result is CAT.</li>
                         </ul>
                     </article>
 
                     <article class="rules-summary-card">
                         <h3>Tic-Tac-Ku</h3>
                         <ul>
+                            <li>Two-player only.</li>
                             <li>Uses the same nine-board layout and move-routing rules as Ultimate Tic Tac Toe.</li>
                             <li>The cell a player chooses sends the next player to the matching small board.</li>
                             <li>If the required small board is closed, any open small board may be chosen.</li>
                             <li>Win small boards by making three in a row inside them.</li>
-                            <li>The first player to win at least five small boards wins. Those five boards do not need
-                                to be in a row.</li>
+                            <li>The first player to win at least five small boards wins. The five boards do not need to
+                                be in a row.</li>
+                            <li>If all small boards close and neither player has five, the result is CAT.</li>
+                        </ul>
+                    </article>
+
+                    <article class="rules-summary-card">
+                        <h3>Insane Tic Tac Toe</h3>
+                        <ul>
+                            <li>Two-player only.</li>
+                            <li>Uses the same nine-board layout and move-routing rules as Ultimate Tic Tac Toe.</li>
+                            <li>The cell a player chooses sends the next player to the matching small board.</li>
+                            <li>If the required small board is already closed, the next player may choose any open small
+                                board.</li>
+                            <li>Inside each small board, there may be only three active pieces total.</li>
+                            <li>When a fourth piece is placed in a small board, that board's oldest active piece
+                                disappears immediately.</li>
+                            <li>A small board closes only when a player wins it. Once closed, it stays closed for the
+                                rest of the game.</li>
+                            <li>Win the overall game by winning three closed small boards in a row. If all small boards
+                                close with no overall winner, the result is CAT.</li>
                         </ul>
                     </article>
                 </div>
@@ -216,6 +268,7 @@
     <script src="js/traditional.js" defer></script>
     <script src="js/infinite.js" defer></script>
     <script src="js/routed-board.js" defer></script>
+    <script src="js/insane.js" defer></script>
     <script src="js/ultimate.js" defer></script>
     <script src="js/tictacku.js" defer></script>
     <script src="js/ui.js" defer></script>

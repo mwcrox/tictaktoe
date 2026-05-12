@@ -13,24 +13,27 @@ function init() {
 
     els.modeButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            selectedMode = button.dataset.mode;
-            if (!MODES[selectedMode].supportsComputer) {
-                selectedOpponent = 'two-player';
-            }
-            updateMenu();
+            openPlayerPrompt(button.dataset.mode, button);
         });
     });
 
-    els.opponentButtons.forEach((button) => {
+    els.promptOpponentButtons.forEach((button) => {
         button.addEventListener('click', () => {
-            if (button.disabled) return;
-            selectedOpponent = button.dataset.opponent;
-            updateMenu();
+            choosePromptOpponent(button.dataset.promptOpponent);
         });
     });
 
-    els.startGameBtn.addEventListener('click', () => {
-        startRoundFromSelection();
+    els.promptCloseTargets.forEach((target) => {
+        target.addEventListener('click', closePlayerPrompt);
+    });
+
+    els.promptCloseBtn.addEventListener('click', closePlayerPrompt);
+    els.promptCancelBtn.addEventListener('click', closePlayerPrompt);
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !els.playerPrompt.hidden) {
+            closePlayerPrompt();
+        }
     });
 
     els.newGameBtn.addEventListener('click', () => {
@@ -59,35 +62,70 @@ function showMenuTab(tabName) {
     els.menuTabPanels.forEach((panel) => {
         panel.hidden = panel.id !== `${tabName}TabPanel`;
     });
+
+    if (tabName !== 'play') {
+        closePlayerPrompt(false);
+    }
 }
 
 function updateMenu() {
     els.modeButtons.forEach((button) => {
-        const isSelected = button.dataset.mode === selectedMode;
+        const isSelected = button.dataset.mode === selectedMode && !els.playerPrompt.hidden;
         button.classList.toggle('is-selected', isSelected);
         button.setAttribute('aria-pressed', String(isSelected));
     });
 
-    const supportsComputer = MODES[selectedMode].supportsComputer;
-    els.opponentHint.textContent = supportsComputer
-        ? 'Traditional and Infinite modes support two-player games or battles against The Entity.'
-        : 'This mode is two-player only.';
-
-    els.opponentButtons.forEach((button) => {
-        const isComputerButton = button.dataset.opponent === 'computer';
-        button.disabled = !supportsComputer && isComputerButton;
-        const isSelected = button.dataset.opponent === selectedOpponent;
-        button.classList.toggle('is-selected', isSelected);
-        button.setAttribute('aria-pressed', String(isSelected));
-    });
-
-    els.modePreview.textContent = MODES[selectedMode].preview;
     document.body.classList.remove('playing-x', 'playing-o');
 }
 
-function startRoundFromSelection() {
+function openPlayerPrompt(mode, triggerButton) {
+    selectedMode = mode;
+    lastPromptTrigger = triggerButton || null;
+
+    const config = MODES[mode];
+    const supportsComputer = config.supportsComputer;
+
+    els.promptTitle.textContent = config.title;
+    els.playerPrompt.classList.toggle('two-player-only', !supportsComputer);
+
+    if (supportsComputer) {
+        els.promptDescription.textContent = `${config.preview} Choose whether to play Two Players or Vs The Entity.`;
+        els.promptComputerBtn.hidden = false;
+        els.promptComputerBtn.disabled = false;
+    } else {
+        els.promptDescription.textContent = `${config.preview} This mode is two-player only.`;
+        els.promptComputerBtn.hidden = true;
+        els.promptComputerBtn.disabled = true;
+    }
+
+    els.playerPrompt.hidden = false;
+    document.body.classList.add('prompt-open');
+
+    updateMenu();
+    window.setTimeout(() => els.promptTwoPlayerBtn.focus(), 0);
+}
+
+function closePlayerPrompt(restoreFocus = true) {
+    if (els.playerPrompt.hidden) return;
+
+    els.playerPrompt.hidden = true;
+    document.body.classList.remove('prompt-open');
+    updateMenu();
+
+    if (restoreFocus && lastPromptTrigger) {
+        lastPromptTrigger.focus();
+    }
+}
+
+function choosePromptOpponent(opponent) {
     const mode = selectedMode;
-    const opponent = MODES[mode].supportsComputer ? selectedOpponent : 'two-player';
+
+    if (opponent === 'computer' && !MODES[mode].supportsComputer) {
+        return;
+    }
+
+    selectedOpponent = opponent;
+    closePlayerPrompt(false);
     startRound(mode, opponent);
 }
 
@@ -129,6 +167,10 @@ function startRound(mode, opponent) {
         setupTicTacKuGame();
     }
 
+    if (mode === 'insane') {
+        setupInsaneGame();
+    }
+
     els.menuScreen.hidden = true;
     els.gameScreen.hidden = false;
     renderApp();
@@ -137,13 +179,15 @@ function startRound(mode, opponent) {
 
 function returnToMenu() {
     computerMoveToken += 1;
+
     if (game) {
         game.isThinking = false;
     }
+
     game = null;
     els.gameScreen.hidden = true;
     els.menuScreen.hidden = false;
-    document.body.classList.remove('playing-x', 'playing-o');
+    document.body.classList.remove('playing-x', 'playing-o', 'prompt-open');
     updateMenu();
 }
 
@@ -153,6 +197,7 @@ function scheduleComputerMove() {
     const token = ++computerMoveToken;
     const mode = game.mode;
     const sessionKey = game.sessionKey;
+
     game.isThinking = true;
     renderApp();
 
@@ -162,6 +207,7 @@ function scheduleComputerMove() {
         }
 
         let move = null;
+
         if (mode === 'traditional') {
             move = chooseTraditionalMove(game.board, game.currentMark);
         } else if (mode === 'infinite') {

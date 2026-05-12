@@ -72,6 +72,8 @@ function renderStatusMessage() {
         } else {
             message = `${current} to move. Each player may keep up to three active pieces.`;
         }
+    } else if (game.mode === 'insane') {
+        message = `${current} to move. ${getRoutingText()} In available small boards, a faded piece is the oldest active piece that will disappear if you play in that board.`;
     } else {
         message = `${current} to move. ${getRoutingText()}`;
     }
@@ -100,15 +102,21 @@ function renderScoreboard(session) {
 }
 
 function renderBoardCounts() {
-    const showCounts = game.mode === 'ultimate' || game.mode === 'tictacku';
+    const showCounts = game.mode === 'ultimate' || game.mode === 'tictacku' || game.mode === 'insane';
     els.boardCountPanel.hidden = !showCounts;
     if (!showCounts) return;
 
     const counts = countSmallBoards(game.smallStatus);
     const rows = [];
 
-    rows.push({ label: `Player 1 ${markSuffixForOwner('player1')}`, value: counts[markForOwner('player1')] || 0, dot: dotForOwner('player1') });
-    rows.push({ label: `Player 2 ${markSuffixForOwner('player2')}`, value: counts[markForOwner('player2')] || 0, dot: dotForOwner('player2') });
+    if (game.opponent === 'computer') {
+        rows.push({ label: `You ${markSuffixForOwner('human')}`, value: counts[markForOwner('human')] || 0, dot: dotForOwner('human') });
+        rows.push({ label: `The Entity ${markSuffixForOwner('computer')}`, value: counts[markForOwner('computer')] || 0, dot: dotForOwner('computer') });
+    } else {
+        rows.push({ label: `Player 1 ${markSuffixForOwner('player1')}`, value: counts[markForOwner('player1')] || 0, dot: dotForOwner('player1') });
+        rows.push({ label: `Player 2 ${markSuffixForOwner('player2')}`, value: counts[markForOwner('player2')] || 0, dot: dotForOwner('player2') });
+    }
+
     rows.push({ label: 'Closed CAT', value: counts.CAT || 0, dot: 'cat' });
 
     els.boardCountGrid.innerHTML = rows.map((row) => scoreRowHTML(row)).join('');

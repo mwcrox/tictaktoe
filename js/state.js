@@ -5,6 +5,7 @@ let selectedOpponent = 'two-player';
 let sessions = {};
 let game = null;
 let computerMoveToken = 0;
+let lastPromptTrigger = null;
 
 const els = {
     menuScreen: document.getElementById('menuScreen'),
@@ -12,11 +13,15 @@ const els = {
     menuTabButtons: Array.from(document.querySelectorAll('[data-menu-tab]')),
     menuTabPanels: Array.from(document.querySelectorAll('.menu-tab-panel')),
     modeButtons: Array.from(document.querySelectorAll('[data-mode]')),
-    opponentPanel: document.getElementById('opponentPanel'),
-    opponentHint: document.getElementById('opponentHint'),
-    opponentButtons: Array.from(document.querySelectorAll('[data-opponent]')),
-    modePreview: document.getElementById('modePreview'),
-    startGameBtn: document.getElementById('startGameBtn'),
+    playerPrompt: document.getElementById('playerPrompt'),
+    promptTitle: document.getElementById('promptTitle'),
+    promptDescription: document.getElementById('promptDescription'),
+    promptTwoPlayerBtn: document.getElementById('promptTwoPlayerBtn'),
+    promptComputerBtn: document.getElementById('promptComputerBtn'),
+    promptCloseBtn: document.getElementById('promptCloseBtn'),
+    promptCancelBtn: document.getElementById('promptCancelBtn'),
+    promptCloseTargets: Array.from(document.querySelectorAll('[data-prompt-close]')),
+    promptOpponentButtons: Array.from(document.querySelectorAll('[data-prompt-opponent]')),
     modeTitle: document.getElementById('modeTitle'),
     modeBadge: document.getElementById('modeBadge'),
     opponentBadge: document.getElementById('opponentBadge'),

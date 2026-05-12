@@ -46,7 +46,11 @@ function renderRoutedBoard() {
                 cell.classList.add('win-cell');
             }
 
-            cell.disabled = !canPlayRoutedCell(boardIndex, cellIndex);
+            if (game.mode === 'insane' && isFadedInsaneCell(boardIndex, cellIndex)) {
+                cell.classList.add('is-oldest');
+            }
+
+            cell.disabled = isComputerTurn() || !canPlayRoutedCell(boardIndex, cellIndex);
             cell.setAttribute('aria-label', getRoutedCellLabel(boardIndex, cellIndex, mark));
             cell.addEventListener('click', () => handleRoutedCell(boardIndex, cellIndex));
             micro.appendChild(cell);
@@ -69,7 +73,7 @@ function renderRoutedBoard() {
 }
 
 function handleRoutedCell(boardIndex, cellIndex) {
-    if (!game || game.gameOver) return;
+    if (!game || game.gameOver || isComputerTurn()) return;
 
     if (!canPlayRoutedCell(boardIndex, cellIndex)) {
         game.statusExtra = 'That move is not available. Use a highlighted board and an empty cell.';
@@ -80,12 +84,19 @@ function handleRoutedCell(boardIndex, cellIndex) {
     game.statusExtra = '';
     playRoutedMove(boardIndex, cellIndex);
     renderApp();
+    scheduleComputerMove();
 }
 
-// Ultimate Tic Tac Toe and Tic-Tac-Ku share the same routing rule:
-// the cell chosen inside one small board selects the next required small board.
-// If that destination board is already closed, the next player may choose any open board.
+// Ultimate Tic Tac Toe, Tic-Tac-Ku, and Insane Tic Tac Toe share the same
+// routing rule: the cell chosen inside one small board selects the next required
+// small board. If that destination board is already closed, the next player may
+// choose any open board.
 function playRoutedMove(boardIndex, cellIndex) {
+    if (game.mode === 'insane') {
+        playInsaneMove(boardIndex, cellIndex);
+        return;
+    }
+
     const mark = game.currentMark;
     const smallBoard = game.boards[boardIndex];
     smallBoard[cellIndex] = mark;
@@ -115,6 +126,10 @@ function resolveRoutedGameOutcome(mark) {
 
     if (game.mode === 'tictacku') {
         return resolveTicTacKuOutcome(mark);
+    }
+
+    if (game.mode === 'insane') {
+        return resolveInsaneOutcome(mark);
     }
 
     return false;
@@ -150,11 +165,18 @@ function getRoutedCellLabel(boardIndex, cellIndex, mark) {
     const row = Math.floor(cellIndex / 3) + 1;
     const column = (cellIndex % 3) + 1;
     const boardName = BOARD_LABELS[boardIndex];
+
     if (mark) {
         return `${boardName} small board, row ${row}, column ${column}: ${mark}.`;
     }
-    if (canPlayRoutedCell(boardIndex, cellIndex)) {
+
+    if (canPlayRoutedCell(boardIndex, cellIndex) && !isComputerTurn()) {
         return `${boardName} small board, row ${row}, column ${column}: empty. Play ${game.currentMark}.`;
     }
+
+    if (isComputerTurn()) {
+        return `${boardName} small board, row ${row}, column ${column}: waiting for The Entity.`;
+    }
+
     return `${boardName} small board, row ${row}, column ${column}: unavailable.`;
 }
