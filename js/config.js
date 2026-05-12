@@ -48,7 +48,7 @@ const RULES_HTML = {
       <li>Players take turns placing red X and blue O pieces on a 3x3 board.</li>
       <li>The first player to make three in a row wins.</li>
       <li>If the board fills with no winner, the winner is shown as CAT and the CAT score increases.</li>
-      <li>In computer mode, the computer uses minimax perfect play and should never lose.</li>
+      <li>When playing The Entity, it uses minimax perfect play and should never lose.</li>
       <li>The first player alternates after each completed game. The starter is always X for that round.</li>
     </ul>
   `,
@@ -58,7 +58,7 @@ const RULES_HTML = {
       <li>When a player places a fourth piece, that player's oldest piece disappears immediately.</li>
       <li>The faded piece is the current player's oldest active piece and will disappear after their move.</li>
       <li>Wins are checked after the new piece is placed and the old piece, if any, disappears.</li>
-      <li>The computer uses depth-limited minimax with queue simulation, threat detection, and strong heuristics.</li>
+      <li>The Entity uses depth-limited minimax with queue simulation, threat detection, and strong heuristics.</li>
     </ul>
   `,
     ultimate: `

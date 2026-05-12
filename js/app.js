@@ -70,7 +70,7 @@ function updateMenu() {
 
     const supportsComputer = MODES[selectedMode].supportsComputer;
     els.opponentHint.textContent = supportsComputer
-        ? 'Traditional and Infinite modes support two-player or computer games.'
+        ? 'Traditional and Infinite modes support two-player games or battles against The Entity.'
         : 'This mode is two-player only.';
 
     els.opponentButtons.forEach((button) => {

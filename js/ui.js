@@ -10,7 +10,7 @@ function renderApp() {
 
     els.modeTitle.textContent = config.title;
     els.modeBadge.textContent = config.badge;
-    els.opponentBadge.textContent = game.opponent === 'computer' ? 'Vs Computer' : 'Two Players';
+    els.opponentBadge.textContent = game.opponent === 'computer' ? 'Vs The Entity' : 'Two Players';
     els.roundBadge.textContent = getRoundLabel(session);
     els.assignmentText.textContent = getAssignmentText();
     els.rulesText.innerHTML = RULES_HTML[game.mode];
@@ -62,7 +62,7 @@ function renderStatusMessage() {
     let message = '';
 
     if (game.isThinking) {
-        message = `Computer is choosing a move for ${game.currentMark}.`;
+        message = `The Entity is choosing a move for ${game.currentMark}.`;
     } else if (game.mode === 'traditional') {
         message = `${current} to move. Get three in a row to win.`;
     } else if (game.mode === 'infinite') {
@@ -88,7 +88,7 @@ function renderScoreboard(session) {
 
     if (game.opponent === 'computer') {
         rows.push({ label: `You ${markSuffixForOwner('human')}`, value: session.scores.human, dot: dotForOwner('human') });
-        rows.push({ label: `Computer ${markSuffixForOwner('computer')}`, value: session.scores.computer, dot: dotForOwner('computer') });
+        rows.push({ label: `The Entity ${markSuffixForOwner('computer')}`, value: session.scores.computer, dot: dotForOwner('computer') });
     } else {
         rows.push({ label: `Player 1 ${markSuffixForOwner('player1')}`, value: session.scores.player1, dot: dotForOwner('player1') });
         rows.push({ label: `Player 2 ${markSuffixForOwner('player2')}`, value: session.scores.player2, dot: dotForOwner('player2') });

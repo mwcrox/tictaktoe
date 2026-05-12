@@ -70,7 +70,7 @@ function isComputerTurn() {
 
 function getAssignmentText() {
     if (game.opponent === 'computer') {
-        return `This round: You are ${markForOwner('human')}. Computer is ${markForOwner('computer')}.`;
+        return `This round: You are ${markForOwner('human')}. The Entity is ${markForOwner('computer')}.`;
     }
     return `This round: Player 1 is ${markForOwner('player1')}. Player 2 is ${markForOwner('player2')}.`;
 }
@@ -99,7 +99,7 @@ function ownerLabel(owner) {
         player1: 'Player 1',
         player2: 'Player 2',
         human: 'You',
-        computer: 'Computer'
+        computer: 'The Entity'
     };
     return labels[owner] || owner;
 }
